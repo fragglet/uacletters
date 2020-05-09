@@ -5,13 +5,14 @@ from glob import glob
 import os
 import omg
 
-OUTPUT_WORDS = """
+ENGLISH_WORDS = """
 U W U
 L O L
 Acacia
 ai
 al
 Alicia
+ali
 all
 allow
 aw
@@ -19,6 +20,7 @@ awl
 Awol
 awooca
 cacao
+caco
 calcic
 calculi
 calico
@@ -69,6 +71,155 @@ willow
 woo
 wool
 wow
+"""
+
+SPANISH_WORDS = """
+acacia
+acalia
+acial
+acocil
+acucia
+ajajaja
+ajiaco
+ajicola
+ajo
+ajolio
+al
+ala
+alcacil
+alcaico
+alcala
+alcall
+alcaucil
+alcolla
+aliaca
+alijo
+alioj
+alioli
+aloa
+aloja
+aojo
+auca
+aula
+caca
+cacao
+cacica
+cacillo
+caco
+cai
+caico
+caja
+cajilla
+cajo
+cajuil
+cala
+calca
+calcilla
+calcio
+calco
+cali
+calicillo
+calila
+calilla
+calilo
+calla
+callao
+callo
+calo
+cao
+cauca
+caula
+cica
+cicca
+cicial
+ciclo
+cija
+cilicio
+cilio
+cilla
+clac
+claco
+clauca
+clica
+cloaca
+coa
+coalla
+coca cola
+cocol
+cocui
+coja
+cojijo
+cojo
+col
+colilla
+colla
+colo
+colocolo
+cuaco
+cuajo
+cual
+cuca
+cuclillo
+cuco
+cuculla
+cuica
+cuico
+cuija
+cuja
+culi
+culo
+icaco
+iliaca
+iliaco
+jaca
+jacal
+jacilla
+jaco
+jallullo
+jau
+jauja
+jaula
+jaulilla
+juicio
+julio
+julo
+la
+lacia
+lacio
+laical
+laico
+laja
+licia
+licio
+lija
+lijo
+lila
+lilac
+lilaila
+lilao
+lilio
+llaca
+lloica
+lo
+loca
+loco
+loica
+lolio
+lucia
+lucillo
+lucilo
+lucio
+luco
+lujo
+lula
+oca
+ocal
+ocio
+olio
+ollao
+olluco
+ulala
+ulluco
 """
 
 def columns_from_image(filename):
@@ -180,6 +331,12 @@ def make_phrase(s, letters):
             result.extend(letters['short_space'])
     return result
 
+words = ENGLISH_WORDS
+#words = SPANISH_WORDS
+
+# Fudge factor:
+wall_len = 32 * len(words)
+
 letters = read_letters()
 
 ed = omg.MapEditor()
@@ -194,10 +351,10 @@ sec1 = add_sector(z_ceil=96)
 sec2 = add_sector(z_ceil=96, z_floor=55)
 sd1 = add_sidedef(sector=sec1, tx_mid="STARTAN2")
 sd2 = add_sidedef(sector=sec2, tx_mid="SHAWN2")
-v1 = add_vertex(x=256, y=13000)
+v1 = add_vertex(x=256, y=wall_len)
 v2 = add_vertex(x=256, y=0)
 v3 = add_vertex(x=0, y=0)
-v4 = add_vertex(x=0, y=13000)
+v4 = add_vertex(x=0, y=wall_len)
 
 # Three boring walls
 add_linedef(vx_a=v4, vx_b=v1, flags=1, front=sd1)
@@ -208,13 +365,12 @@ add_linedef(vx_a=v2, vx_b=v3, flags=1, front=sd1)
 last_v = v3
 y = 0
 
-words = OUTPUT_WORDS.strip().split("\n")
-for word in words:
+for word in words.strip().split("\n"):
     word = " " + word + " "
-    v = add_vertex(x=0, y=y+64)
+    v = add_vertex(x=0, y=y+32)
     add_linedef(vx_a=last_v, vx_b=v, flags=1, front=sd1)
     last_v = v
-    y += 64
+    y += 32
 
     start_v = last_v
     backpin_v = add_vertex(x=-1, y=y)
