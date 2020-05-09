@@ -238,5 +238,5 @@ add_thing(x=128, y=128, type=1, angle=180)
 
 w = omg.WAD()
 w.maps["MAP01"] = ed.to_lumps()
-w.to_file("foo.wad")
+w.to_file("letters.wad")
 
