@@ -35,6 +35,7 @@ coca cola
 cocoa
 coil
 colic
+cool
 cow
 cowl
 Cuculi
