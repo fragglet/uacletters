@@ -7,7 +7,7 @@ import omg
 
 OUTPUT_WORDS = """
 U W U
-A
+L O L
 Acacia
 ai
 al
@@ -17,7 +17,7 @@ allow
 aw
 awl
 Awol
-Caca
+awooca
 cacao
 calcic
 calculi
@@ -29,8 +29,7 @@ claw
 Clio
 cloaca
 coal
-coca
-cola
+coca cola
 cocoa
 coil
 colic
@@ -38,7 +37,6 @@ cow
 cowl
 Cuculi
 cull
-I
 ill
 Io
 Iowa
@@ -193,34 +191,50 @@ add_vertex = make_adder(ed.vertexes, omg.Vertex)
 add_thing = make_adder(ed.things, omg.Thing)
 
 sec1 = add_sector(z_ceil=96)
+sec2 = add_sector(z_ceil=96, z_floor=55)
 sd1 = add_sidedef(sector=sec1, tx_mid="STARTAN2")
-v1 = add_vertex(x=256, y=8192)
+sd2 = add_sidedef(sector=sec2, tx_mid="SHAWN2")
+v1 = add_vertex(x=256, y=13000)
 v2 = add_vertex(x=256, y=0)
 v3 = add_vertex(x=0, y=0)
-v4 = add_vertex(x=0, y=8192)
+v4 = add_vertex(x=0, y=13000)
 
 # Three boring walls
 add_linedef(vx_a=v4, vx_b=v1, flags=1, front=sd1)
 add_linedef(vx_a=v1, vx_b=v2, flags=1, front=sd1)
 add_linedef(vx_a=v2, vx_b=v3, flags=1, front=sd1)
 
-phrase = " ".join(OUTPUT_WORDS.strip().split("\n"))
-
 # The fourth wall is built out of small segments:
 last_v = v3
 y = 0
-for offset, npixels in make_phrase(phrase, letters):
-    sd = add_sidedef(sector=sec1, tx_mid="SHAWN1", off_x=offset)
-    v = add_vertex(x=0, y=y+npixels)
-    add_linedef(vx_a=last_v, vx_b=v, flags=1, front=sd)
+
+words = OUTPUT_WORDS.strip().split("\n")
+for word in words:
+    word = " " + word + " "
+    v = add_vertex(x=0, y=y+64)
+    add_linedef(vx_a=last_v, vx_b=v, flags=1, front=sd1)
     last_v = v
-    y += npixels
+    y += 64
+
+    start_v = last_v
+    backpin_v = add_vertex(x=-1, y=y)
+
+    for offset, npixels in make_phrase(word, letters):
+        sd = add_sidedef(sector=sec1, tx_low="SHAWN1", off_x=offset)
+        v = add_vertex(x=0, y=y+npixels)
+        add_linedef(vx_a=last_v, vx_b=v, front=sd, back=sd2,
+                    flags=1+4+16) # impassible, two-sided, lower-unpeg
+        last_v = v
+        y += npixels
+
+    add_linedef(vx_a=start_v, vx_b=backpin_v, front=sd2, flags=1)
+    add_linedef(vx_a=backpin_v, vx_b=last_v, front=sd2, flags=1)
 
 # Tailing end to join back with first linedef
 add_linedef(vx_a=last_v, vx_b=v4, front=sd1, flags=1)
 
 # Player 1 start
-add_thing(x=128, y=128, type=1)
+add_thing(x=128, y=128, type=1, angle=180)
 
 w = omg.WAD()
 w.maps["MAP01"] = ed.to_lumps()
